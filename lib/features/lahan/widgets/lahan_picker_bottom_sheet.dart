@@ -1,5 +1,6 @@
 // lib/features/lahan/widgets/lahan_picker_bottom_sheet.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../../core/lahan/current_lahan.dart';
 import '../../../core/utils/mapping_utils.dart';
@@ -22,6 +23,12 @@ Future<void> showLahanPicker(BuildContext context) async {
         stream: watchUserLahan(),
         builder: (sheetContext, snapshot) {
           final items = snapshot.data ?? const <LahanItem>[];
+
+          // DEBUG: lihat apa saja lahan yang terbaca di bottom sheet
+          debugPrint(
+            'LahanPicker: items (${items.length}) = '
+            '${items.map((e) => '${e.id}/${e.label} online=${e.online}').toList()}',
+          );
 
           if (items.isEmpty) {
             return Container(

@@ -13,7 +13,7 @@ class CurrentLahan {
   CurrentLahan._();
 
   /// Default fallback (kalau user belum pernah pilih)
-  /// Boleh kamu ubah, tapi saat init akan dioverride oleh ACL jika ada.
+  /// Saat init akan dioverride oleh ACL jika ada.
   final ValueNotifier<String> lahanId = ValueNotifier<String>('lahan1');
 
   /// Dipanggil dari main() sekali saat startup.
@@ -24,24 +24,40 @@ class CurrentLahan {
     final saved = sp.getString(_prefKey);
     if (saved != null && saved.isNotEmpty) {
       lahanId.value = saved;
+      debugPrint('CurrentLahan.init: load dari SharedPreferences → $saved');
+    } else {
+      debugPrint(
+          'CurrentLahan.init: belum ada di SharedPreferences, pakai default=${lahanId.value}');
     }
 
     // 2. Jika user sudah login & punya ACL, pilihkan lahan pertama yang ada di ACL
     final uid = FirebaseAuth.instance.currentUser?.uid;
+    debugPrint('CurrentLahan.init: uid sekarang = $uid');
+
     if (uid != null) {
-      final aclSnap = await FirebaseDatabase.instance.ref('acl/$uid').get();
+      final aclRef = FirebaseDatabase.instance.ref('acl/$uid');
+      final aclSnap = await aclRef.get();
+
+      debugPrint('CurrentLahan.init: snapshot acl/$uid = ${aclSnap.value}');
 
       if (aclSnap.exists) {
         final m = (aclSnap.value as Map?) ?? {};
         if (m.isNotEmpty) {
           final firstKey = m.keys.first.toString();
+          debugPrint('CurrentLahan.init: daftar lahan dari ACL = ${m.keys}');
 
           // Kalau lahan yang tersimpan tidak ada di ACL, pakai lahan pertama
           if (!m.containsKey(lahanId.value)) {
+            debugPrint(
+                'CurrentLahan.init: lahan tersimpan (${lahanId.value}) tidak ada di ACL, ganti ke $firstKey');
             lahanId.value = firstKey;
             await sp.setString(_prefKey, firstKey);
           }
+        } else {
+          debugPrint('CurrentLahan.init: ACL kosong untuk uid=$uid');
         }
+      } else {
+        debugPrint('CurrentLahan.init: node acl/$uid tidak ada');
       }
     }
   }
@@ -51,6 +67,7 @@ class CurrentLahan {
     lahanId.value = id;
     final sp = await SharedPreferences.getInstance();
     await sp.setString(_prefKey, id);
+    debugPrint('CurrentLahan.setLahan: lahan aktif diganti ke $id');
   }
 }
 
@@ -68,39 +85,63 @@ class LahanItem {
 }
 
 /// Stream daftar lahan yang dimiliki user berdasarkan ACL: /acl/{uid}
-/// Lalu join dengan /lahan_meta dan /state/{lahan}/last_seen (status online)
+/// + ambil optional display_name dari lahan_meta/$id (sesuai rules)
 Stream<List<LahanItem>> watchUserLahan() async* {
   final uid = FirebaseAuth.instance.currentUser?.uid;
   if (uid == null) {
+    debugPrint('watchUserLahan: UID null → user belum login');
     yield const <LahanItem>[];
     return;
   }
 
   final db = FirebaseDatabase.instance.ref();
+  debugPrint('watchUserLahan: listen ACL untuk uid=$uid');
 
-  // Dengarkan ACL user
   await for (final aclEv in db.child('acl/$uid').onValue) {
-    final aclMap = (aclEv.snapshot.value as Map?) ?? {};
-    final ids = aclMap.keys.map((e) => e.toString()).toList()..sort();
+    try {
+      final raw = aclEv.snapshot.value;
+      debugPrint('watchUserLahan: raw ACL snapshot = $raw');
 
-    // Ambil lahan_meta (opsional)
-    final metaSnap = await db.child('lahan_meta').get();
-    final meta = (metaSnap.value as Map?) ?? {};
+      final aclMap = (raw as Map?) ?? {};
+      final ids = aclMap.keys.map((e) => e.toString()).toList()..sort();
+      debugPrint('watchUserLahan: ids terdeteksi dari ACL = $ids');
 
-    // Cek online dari state/{lahan}/last_seen
-    final nowSec = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      final items = <LahanItem>[];
 
-    final items = <LahanItem>[];
-    for (final id in ids) {
-      final label = (meta[id]?['display_name'] ?? id).toString();
+      for (final id in ids) {
+        // Default: label = id
+        String label = id;
 
-      final lsSnap = await db.child('state/$id/last_seen').get();
-      final ls = (lsSnap.value as int?) ?? 0;
-      final online = (nowSec - ls) <= 120; // online jika update <= 2 menit
+        // Coba ambil lahan_meta/$id/display_name (INI sesuai rules-mu)
+        try {
+          final metaSnap = await db
+              .child('lahan_meta')
+              .child(id)
+              .child('display_name')
+              .get();
+          if (metaSnap.exists && metaSnap.value != null) {
+            label = metaSnap.value.toString();
+          }
+        } catch (e) {
+          debugPrint('watchUserLahan: gagal baca lahan_meta/$id → $e');
+        }
 
-      items.add(LahanItem(id: id, label: label, online: online));
+        // Untuk sekarang, status online belum dihitung (false dulu)
+        items.add(LahanItem(
+          id: id,
+          label: label,
+          online: false,
+        ));
+      }
+
+      debugPrint('watchUserLahan: hasil items length=${items.length} '
+          '→ ${items.map((e) => '${e.id}/${e.label}').toList()}');
+
+      yield items;
+    } catch (e, st) {
+      debugPrint('watchUserLahan ERROR (outer): $e\n$st');
+      // Jangan bikin stream mati, kirim list kosong saja
+      yield const <LahanItem>[];
     }
-
-    yield items;
   }
 }
