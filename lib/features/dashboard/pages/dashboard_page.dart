@@ -34,7 +34,8 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: const Color.fromARGB(255, 19, 120, 83),
+        automaticallyImplyLeading: false,
+        backgroundColor: const Color(0xFF1E7A3F),
         surfaceTintColor: Colors.white,
         title: Row(
           mainAxisSize: MainAxisSize.min,
@@ -44,7 +45,7 @@ class _DashboardState extends State<Dashboard> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF1E7A3F),
+                color: Color.fromARGB(255, 255, 255, 255),
               ),
             ),
             const SizedBox(width: 8),
@@ -108,7 +109,7 @@ class _DashboardState extends State<Dashboard> {
           PopupMenuButton<String>(
             icon: const Icon(
               Icons.more_vert_rounded,
-              color: Color(0xFF1E7A3F),
+              color: Color.fromARGB(255, 251, 251, 251),
             ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),

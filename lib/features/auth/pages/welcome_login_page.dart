@@ -315,7 +315,6 @@ class _LoginPage extends StatelessWidget {
                       print('DEBUG: UID yang login sekarang = $uid');
 
                       if (context.mounted) {
-                        Navigator.of(context).pop();
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
                             builder: (_) => const Dashboard(),
