@@ -54,7 +54,7 @@ class HomeView extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             const Text(
-                              'Dashboard SolarSonic',
+                              'Dashboard SolarSonic\nIoT Guard',
                               style: TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
