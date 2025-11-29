@@ -76,7 +76,8 @@ class NotificationsView extends StatelessWidget {
                           'Pukul ${fmtTime.format(e.timeLocal)}'
                           '${e.conf > 0 ? ' • akurasi ${e.conf.toStringAsFixed(2)}' : ''}',
                         ),
-                        trailing: const Icon(Icons.chevron_right),
+                        // trailing DIHAPUS supaya tidak ada tanda ">"
+                        // trailing: const Icon(Icons.chevron_right),
                       ),
                     ),
                   ],

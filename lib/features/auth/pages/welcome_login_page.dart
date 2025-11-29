@@ -117,6 +117,12 @@ class _WelcomePage extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                     ),
                   ),
+                  const SizedBox(height: 12),
+                  // === LOGO DI BAWAH JUDUL ===
+                  Image.asset(
+                    'assets/image/logo_solarsonic.png',
+                    height: 260,
+                  ),
                 ],
               ),
               const Spacer(),

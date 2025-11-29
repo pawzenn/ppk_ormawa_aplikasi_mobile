@@ -18,10 +18,10 @@ class DeviceStatusChip extends StatelessWidget {
 
     String sub = '';
     if (lastSeen != null) {
-      sub = 'Terakhir aktif: '
-          '${lastSeen!.hour.toString().padLeft(2, '0')}'
-          ':'
-          '${lastSeen!.minute.toString().padLeft(2, '0')}';
+      // sub = 'Terakhir aktif: '
+      //     '${lastSeen!.hour.toString().padLeft(2, '0')}'
+      //     ':'
+      //     '${lastSeen!.minute.toString().padLeft(2, '0')}';
     }
 
     return Container(

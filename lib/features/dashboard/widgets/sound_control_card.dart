@@ -134,6 +134,9 @@ class _SoundControlCardState extends State<SoundControlCard> {
                   child: RadioListTile<bool>(
                     value: true,
                     groupValue: soundAuto,
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                    visualDensity: VisualDensity.compact,
                     onChanged: (v) {
                       setState(() => soundAuto = true);
                       _commitControl(); // langsung kirim saat pindah Auto
@@ -145,11 +148,15 @@ class _SoundControlCardState extends State<SoundControlCard> {
                   child: RadioListTile<bool>(
                     value: false,
                     groupValue: soundAuto,
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                    visualDensity: VisualDensity.compact,
                     onChanged: (v) {
                       setState(() => soundAuto = false);
                       _commitControl(); // pindah Manual -> kirim status
                     },
                     title: const Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text('Manual'),
                         SizedBox(width: 8),
@@ -164,7 +171,8 @@ class _SoundControlCardState extends State<SoundControlCard> {
             // Slider volume (aktif hanya saat Manual)
             Row(
               children: [
-                const Icon(Icons.volume_mute),
+                const Icon(Icons.volume_mute, size: 20),
+                const SizedBox(width: 4),
                 Expanded(
                   child: Slider(
                     value: manualVolume,
@@ -180,34 +188,44 @@ class _SoundControlCardState extends State<SoundControlCard> {
                           },
                   ),
                 ),
-                const Icon(Icons.volume_up),
-                const SizedBox(width: 6),
-                Text(manualVolume.round().toString()),
+                const SizedBox(width: 4),
+                const Icon(Icons.volume_up, size: 20),
+                const SizedBox(width: 4),
+                SizedBox(
+                  width: 32,
+                  child: Text(
+                    manualVolume.round().toString(),
+                    textAlign: TextAlign.right,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 6),
 
-            Text(
-              soundAuto
-                  ? 'Mode Auto aktif (volume dikendalikan sistem).'
-                  : 'Mode Manual: volume = ${manualVolume.round()}',
-              style: const TextStyle(color: Colors.black54),
-            ),
+            // Text(
+            //   soundAuto
+            //       ? 'Mode Auto aktif (volume dikendalikan sistem).'
+            //       : 'Mode Manual: volume = ${manualVolume.round()}',
+            //   style: const TextStyle(color: Colors.black54),
+            // ),
 
             const SizedBox(height: 8),
 
             // Info feedback dari perangkat (opsional)
-            if (lastSeen != null)
-              Text(
-                'Terakhir aktif: $lastSeen'
-                ' • mode terapan: $appliedMode'
-                ' • volume: $appliedVolume'
-                '${speakerConnected ? ' • speaker tersambung' : ''}',
-                style: const TextStyle(
-                  fontSize: 11,
-                  color: Colors.black45,
-                ),
-              ),
+            // if (lastSeen != null)
+            //   Text(
+            //     'Terakhir aktif: $lastSeen'
+            //     ' • mode terapan: $appliedMode'
+            //     ' • volume: $appliedVolume'
+            //     '${speakerConnected ? ' • speaker tersambung' : ''}',
+            //     style: const TextStyle(
+            //       fontSize: 11,
+            //       color: Colors.black45,
+            //     ),
+            //     maxLines: 3,
+            //     overflow: TextOverflow.ellipsis,
+            //     softWrap: true,
+            //   ),
           ],
         ),
       ),
