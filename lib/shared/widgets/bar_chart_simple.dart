@@ -34,6 +34,34 @@ class BarChartSimple extends StatelessWidget {
     return BarChart(
       BarChartData(
         minY: 0,
+
+        // === SENTUHAN & TOOLTIP ===
+        barTouchData: BarTouchData(
+          enabled: true,
+          touchTooltipData: BarTouchTooltipData(
+            // Versi baru: pakai getTooltipColor, bukan tooltipBgColor
+            getTooltipColor: (group) => const Color(0xFF1E7A3F),
+            tooltipRoundedRadius: 8,
+            tooltipPadding: const EdgeInsets.symmetric(
+              horizontal: 8,
+              vertical: 4,
+            ),
+            fitInsideHorizontally: true,
+            fitInsideVertically: true,
+            getTooltipItem: (group, groupIndex, rod, rodIndex) {
+              final value = rod.toY;
+              return BarTooltipItem(
+                value.toStringAsFixed(0), // mis. 20
+                const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              );
+            },
+          ),
+        ),
+
         barGroups: groups,
         gridData: const FlGridData(show: true),
         borderData: FlBorderData(show: true),

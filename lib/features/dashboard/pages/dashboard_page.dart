@@ -34,9 +34,23 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF1E7A3F),
-        title: const Text(
-          'SolarSonic',
-          style: TextStyle(fontWeight: FontWeight.w700),
+        foregroundColor: Colors.white,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'SolarSonic',
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Image.asset(
+              'assets/image/logo_solarsonic.png',
+              height: 46,
+            ),
+          ],
         ),
         actions: [
           // ===== CHIP LAHAN AKTIF =====

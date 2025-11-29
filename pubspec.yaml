@@ -1,4 +1,4 @@
-name: flutter_application_1
+name: flutter_application_2
 description: A new Flutter project.
 publish_to: "none"
 
@@ -28,11 +28,15 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  # Package untuk generate icon aplikasi
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
 
   assets:
+    - assets/icon/logo.png
+    - assets/icon/logo2.png
     - assets/image/Bg.png
     - assets/image/burung.jpg
     - assets/image/drop.png
@@ -43,3 +47,10 @@ flutter:
     - assets/image/splash.png
     - assets/image/tikus_sawah.jpg
     - assets/image/user.png
+    - assets/image/logo_solarsonic.png
+
+# Konfigurasi untuk generate icon launcher (Android + iOS)
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/logo2.png"
