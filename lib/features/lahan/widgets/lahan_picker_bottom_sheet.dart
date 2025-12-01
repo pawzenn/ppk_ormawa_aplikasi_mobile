@@ -231,6 +231,8 @@ Future<void> showLahanPicker(BuildContext context) async {
                                         ScaffoldMessenger.of(rootContext)
                                             .showSnackBar(
                                           SnackBar(
+                                            duration: const Duration(
+                                                seconds: 2), // ⬅️ 2 detik
                                             content: Text(
                                               'Berpindah ke ${labelFromLahanId(tempSelected)}',
                                             ),
